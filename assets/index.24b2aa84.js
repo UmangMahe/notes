@@ -1,0 +1,1 @@
+import{j as a,r as i,F as n,a as c,S as u,R as l,b as r,A as s}from"./index.8f38002c.js";function f({routes:t=[],props:p}){return a("div",{children:a(i.exports.Suspense,{fallback:a(n,{}),children:c(u,{children:[t.map((e,o)=>a(l,{...e},o)),a(r,{from:`${s}`,to:`${s}/login`}),a(r,{to:`${s}/404`})]})})})}export{f as default};
