@@ -1,34 +1,43 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import './App.css'
+import { Suspense, useState } from "react";
+import reactLogo from "./assets/react.svg";
+import { Redirect, Route, Switch } from "react-router";
+import { routes } from "./routes";
+import { APP_PREFIX_PATH, AUTH_PREFIX_PATH } from "./configs/AppConfig";
 
-function App() {
-  const [count, setCount] = useState(0)
+const RouteInterceptor = ({ children, isAuth, ...rest }) => {
+  console.log(children);
+  return (
+    <Route {...rest}>
+      {rest.path === AUTH_PREFIX_PATH ? (
+        children
+      ) : isAuth ? (
+        children
+      ) : (
+        <Redirect to={AUTH_PREFIX_PATH} />
+      )}
+    </Route>
+  );
+};
+function App(props) {
+  const [count, setCount] = useState(0);
 
   return (
-    <div className="App">
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src="/vite.svg" className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://reactjs.org" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </div>
-  )
+    <>
+      <Suspense fallback={<></>}>
+        <Switch>
+          <Route path="/" exact>
+            <Redirect to={APP_PREFIX_PATH} />
+          </Route>
+          {routes.map((route, index) => (
+            <RouteInterceptor key={index} {...route} isAuth={true}>
+              <route.component {...props} routes={route.routes} />
+            </RouteInterceptor>
+          ))}
+          <Redirect to={`${APP_PREFIX_PATH}/404`} />
+        </Switch>
+      </Suspense>
+    </>
+  );
 }
 
-export default App
+export default App;
